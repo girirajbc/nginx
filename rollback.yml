@@ -1,0 +1,68 @@
+---
+- name: Rollback configuration
+  hosts: nginx
+  become: true
+  
+  vars:
+    config_path: /etc/nginx/sites-enabled/
+    backup_dir: /etc/nginx/backups
+    rollback_version: 2  # change this to the desired version number
+
+  tasks:
+    - name: Create backup directory
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+    
+    - name: Create backup of current configuration for us region  ##  us 
+      command: "cp {{ config_path }}/us.conf {{ config_path }}/nginx.conf.backup.us"
+
+    - name: Rollback to previous configuration
+      command: "cp {{ backup_dir }}/nginx.conf.backup.us {{ config_path }}/us.conf"
+      ignore_errors: yes
+
+    - name: move backup of current configuration for us region to backup path
+      command: "mv {{ config_path }}/nginx.conf.backup.us {{ backup_dir }}/nginx.conf.backup.us"
+      notify: restart nginx
+
+
+    - name: Create backup of current configuration for eu region  ##  eu
+      command: "cp {{ config_path }}/eu.conf {{ config_path }}/nginx.conf.backup.eu"
+
+    - name: Rollback to previous configuration
+      command: "cp {{ backup_dir }}/nginx.conf.backup.eu {{ config_path }}/eu.conf"
+      ignore_errors: yes
+
+    - name: move backup of current configuration for eu region to backup path
+      command: "mv {{ config_path }}/nginx.conf.backup.eu {{ backup_dir }}/nginx.conf.backup.eu"
+      notify: restart nginx
+
+
+    - name: Create backup of current configuration for apac region  ##  apac
+      command: "cp {{ config_path }}/apac.conf {{ config_path }}/nginx.conf.backup.apac"
+
+    - name: Rollback to previous configuration
+      command: "cp {{ backup_dir }}/nginx.conf.backup.apac {{ config_path }}/apac.conf"
+      ignore_errors: yes
+
+    - name: move backup of current configuration for apac region to backup path
+      command: "mv {{ config_path }}/nginx.conf.backup.apac {{ backup_dir }}/nginx.conf.backup.apac"
+      notify: restart nginx
+
+
+    - name: Create backup of current configuration for latam region  # latam
+      command: "cp {{ config_path }}/latam.conf {{ config_path }}/nginx.conf.backup.latam"
+
+    - name: Rollback to previous configuration
+      command: "cp {{ backup_dir }}/nginx.conf.backup.latam {{ config_path }}/latam.conf"
+      ignore_errors: yes
+
+    - name: move backup of current configuration for latam region to backup path
+      command: "mv {{ config_path }}/nginx.conf.backup.latam {{ backup_dir }}/nginx.conf.backup.latam"
+      notify: restart nginx
+      
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
