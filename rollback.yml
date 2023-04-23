@@ -12,7 +12,6 @@
       file:
         path: "{{ backup_dir }}"
         state: directory
-      tag: always
       
     - name: Rollback for us region  ##  us 
       block:
