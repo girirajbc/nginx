@@ -14,7 +14,7 @@
         state: directory
       tag: always
       
-    - name: Rollback for us regionn  ##  us 
+    - name: Rollback for us region  ##  us 
       block:
         - name: Create backup of current configuration for us regio
           command: "cp {{ config_path }}/us.conf {{ config_path }}/nginx.conf.backup.us"
